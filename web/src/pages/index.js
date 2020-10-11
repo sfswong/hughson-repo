@@ -1,112 +1,132 @@
-import React from 'react'
-import {graphql} from 'gatsby'
+import React from "react";
+import { graphql } from "gatsby";
 import {
   mapEdgesToNodes,
   filterOutDocsWithoutSlugs,
-  filterOutDocsPublishedInTheFuture
-} from '../lib/helpers'
-import BlogPostPreviewList from '../components/blog-post-preview-list'
-import Container from '../components/container'
-import GraphQLErrorList from '../components/graphql-error-list'
-import SEO from '../components/seo'
-import Layout from '../containers/layout'
+  filterOutDocsPublishedInTheFuture,
+} from "../lib/helpers";
+import BlogPostPreviewList from "../components/blog-post-preview-list";
+import Container from "../components/container";
+import GraphQLErrorList from "../components/graphql-error-list";
+import SEO from "../components/seo";
+import Layout from "../containers/layout";
+
+import { Hero } from "../components/hero";
+import { ProjectsList } from "../components/projectsList";
+import { AboutSection } from "../components/aboutSection";
+import { BlogsSection } from "../components/blogsSection";
 
 export const query = graphql`
-  fragment SanityImage on SanityMainImage {
-    crop {
-      _key
-      _type
-      top
-      bottom
-      left
-      right
-    }
-    hotspot {
-      _key
-      _type
-      x
-      y
-      height
-      width
-    }
-    asset {
-      _id
-    }
-  }
-
-  query IndexPageQuery {
+  query MyQuery {
     site: sanitySiteSettings(_id: { regex: "/(drafts.|)siteSettings/" }) {
       title
       description
       keywords
     }
-    posts: allSanityPost(
-      limit: 6
-      sort: { fields: [publishedAt], order: DESC }
-      filter: { slug: { current: { ne: null } }, publishedAt: { ne: null } }
-    ) {
-      edges {
-        node {
-          id
-          publishedAt
+    page: sanityPage(path: { eq: "/" }) {
+      id
+      content {
+        ... on SanityAboutSection {
+          _key
+          _type
+          headline
+          experiences {
+            title
+            years
+          }
+          passions {
+            title
+            icon
+          }
+          skills {
+            title
+            icon
+          }
+          tools {
+            title
+            icon
+          }
+          schools {
+            title
+            years
+          }
+        }
+        ... on SanityBlogList {
+          _key
+          _type
+          headline
+        }
+        ... on SanityHero {
+          _key
+          _type
+          ctas {
+            title
+            link
+          }
+          description
+          headline
           mainImage {
-            ...SanityImage
-            alt
+            asset {
+              url
+              fluid {
+                ...GatsbySanityImageFluid
+              }
+            }
           }
-          title
-          _rawExcerpt
-          slug {
-            current
-          }
+          topline
+        }
+        ... on SanityProjectList {
+          _key
+          _type
+          headline
         }
       }
     }
   }
-`
+`;
+const RenderSections = ({ sections }) =>
+  sections.map((s) => {
+    switch (s._type) {
+      case "hero":
+        return <Hero {...s} />;
+      case "projectList":
+        return <ProjectsList {...s} />;
+      case "blogList":
+        return <BlogsSection {...s} />;
+      case "aboutSection":
+        return <AboutSection {...s} />;
+      default:
+        return `Missing component ${s._type}`;
+    }
+  });
 
-const IndexPage = props => {
-  const {data, errors} = props
+const IndexPage = (props) => {
+  const { data, errors } = props;
 
   if (errors) {
     return (
       <Layout>
         <GraphQLErrorList errors={errors} />
       </Layout>
-    )
+    );
   }
 
-  const site = (data || {}).site
-  const postNodes = (data || {}).posts
-    ? mapEdgesToNodes(data.posts)
-      .filter(filterOutDocsWithoutSlugs)
-      .filter(filterOutDocsPublishedInTheFuture)
-    : []
-
+  const site = (data || {}).site;
+  console.log("data", data);
   if (!site) {
     throw new Error(
       'Missing "Site settings". Open the studio at http://localhost:3333 and add some content to "Site settings" and restart the development server.'
-    )
+    );
   }
 
   return (
     <Layout>
-      <SEO
-        title={site.title}
-        description={site.description}
-        keywords={site.keywords}
-      />
+      <SEO title={site.title} description={site.description} keywords={site.keywords} />
       <Container>
-        <h1 hidden>Welcome to {site.title}</h1>
-        {postNodes && (
-          <BlogPostPreviewList
-            title='Latest blog posts'
-            nodes={postNodes}
-            browseMoreHref='/archive/'
-          />
-        )}
+        <RenderSections sections={data.page.content} />
       </Container>
     </Layout>
-  )
-}
+  );
+};
 
-export default IndexPage
+export default IndexPage;

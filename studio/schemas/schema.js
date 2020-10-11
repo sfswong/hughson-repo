@@ -17,10 +17,20 @@ import excerptPortableText from './objects/excerptPortableText'
 import mainImage from './objects/mainImage'
 import authorReference from './objects/authorReference'
 
+import project from './documents/project'
+import experience from './objects/experience'
+import blogList from './objects/blogList'
+import projectList from './objects/projectList'
+import page from './documents/page'
+import cta from './objects/cta'
+import hero from './objects/hero'
+import about from './objects/about'
+import labelWithIcon from './objects/labelWithIcon'
+
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
   // We name our schema
-  name: 'blog',
+  name: 'default',
   // Then proceed to concatenate our our document type
   // to the ones provided by any plugins that are installed
   types: schemaTypes.concat([
@@ -34,7 +44,17 @@ export default createSchema({
     authorReference,
     bodyPortableText,
     bioPortableText,
-    excerptPortableText
+    excerptPortableText,
+
+    labelWithIcon,
+    page,
+    about,
+    cta,
+    hero,
+    experience,
+    blogList,
+    projectList,
+    project
 
     // When added to this list, object types can be used as
     // { type: 'typename' } in other document schemas
