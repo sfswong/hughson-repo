@@ -10,6 +10,7 @@ export const ProjectsList = ({ headline }) => {
           nodes {
             description
             title
+            link
             mainImage {
               asset {
                 fluid {
