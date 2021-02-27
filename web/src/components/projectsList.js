@@ -27,7 +27,7 @@ export const ProjectsList = ({ headline }) => {
       <h2>{headline}</h2>
       <div className="row">
         {projects.map((p) => (
-          <ItemCard title={p.title} description={p.description} image={p.mainImage} />
+          <ItemCard title={p.title} path={p.link} description={p.description} image={p.mainImage} />
         ))}
       </div>
     </div>

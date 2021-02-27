@@ -79,6 +79,7 @@ export const query = graphql`
           _key
           _type
           headline
+          link
         }
       }
     }
