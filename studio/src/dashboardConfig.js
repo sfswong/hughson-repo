@@ -30,7 +30,7 @@ export default {
         data: [
           {
             title: 'GitHub repo',
-            value: 'https://github.com/chug2k/hughson-repo',
+            value: 'https://github.com/sfswong/hughson-repo',
             category: 'Code'
           },
           { title: 'Frontend', value: 'https://hughson-repo.netlify.app', category: 'apps' }
