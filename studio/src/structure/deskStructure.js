@@ -58,7 +58,7 @@ export default () =>
         ),
       S.divider(),
       S.listItem()
-        .title('Blog posts')
+        .title('Blog posts1')
         .icon(MdDescription)
         .schemaType('post')
         .child(S.documentTypeList('post').title('Blog posts')),
